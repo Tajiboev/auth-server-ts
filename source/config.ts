@@ -2,16 +2,24 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const SERVER_PORT = process.env.SERVER_PORT || 3001;
-const SERVER_HOSTNAME = process.env.SERVER_HOSTNAME || 'localhost';
+const server = {
+	hostname: process.env.SERVER_HOSTNAME || 'localhost',
+	port: process.env.SERVER_PORT || 3001
+};
 
-const SERVER = {
-	hostname: SERVER_HOSTNAME,
-	port: SERVER_PORT
+const mongo = {
+	password: process.env.MONGO_PASSWORD,
+	dbname: process.env.MONGO_DBNAME
+};
+
+const jwt = {
+	key: process.env.JWT_KEY
 };
 
 const config = {
-	server: SERVER
+	server,
+	mongo,
+	jwt
 };
 
 export default config;
