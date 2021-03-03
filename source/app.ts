@@ -16,10 +16,10 @@ console.log(config.mongo.url);
 mongoose
 	.connect(config.mongo.url, config.mongo.options)
 	.then((result) => {
-		console.info('\n✅ Connected to the database!');
+		logger.info('app.ts', '✅ Connected to the database!');
 	})
 	.catch((error) => {
-		console.error('\n❌ Could not connect to the database');
+		logger.error('app.ts', '❌ Could not connect to the database');
 	});
 
 app.use(cors());
@@ -36,8 +36,8 @@ app.use((req, res, next) => {
 });
 
 app.use((error: ErrorWithStatusCode, req: Request, res: Response, next: NextFunction) => {
-	logger.error('Last error handler', error.message, error);
-	res.status(error.statusCode | 500).json({message: error.message});
+	// logger.error('Error handler', error.message, error);
+	res.status(error.statusCode || 500).json({message: error.message});
 });
 
 export default app;

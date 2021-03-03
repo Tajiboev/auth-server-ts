@@ -17,7 +17,8 @@ const mongo = {
 };
 
 const jwt = {
-	key: process.env.JWT_KEY
+	key: process.env.JWT_KEY || 'superencryptedsecret',
+	issuer: process.env.JWT_ISSUER || 'issuerName'
 };
 
 const config = {

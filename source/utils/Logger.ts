@@ -1,21 +1,21 @@
-const info = (namespace: string, message: string, object?: any) => {
+const info = (namespace: string, message: string, object?: any): void => {
 	if (object) {
-		console.info(`[${getTimeStamp()}] [INFO] [${namespace}] ${message}`, object);
+		console.info(`\n➡️  [${getTimeStamp()}] [INFO] [${namespace}] ${message}`, object);
 	} else {
-		console.info(`[${getTimeStamp()}] [INFO] [${namespace}] ${message}`);
+		console.info(`\n➡️  [${getTimeStamp()}] [INFO] [${namespace}] ${message}`);
 	}
 };
 
-const error = (namespace: string, message: string, object?: any) => {
+const error = (namespace: string, message: string, object?: any): void => {
 	if (object) {
-		console.error(`[${getTimeStamp()}] [ERROR] [${namespace}] ${message}`, object);
+		console.error(`\n🆘 [${getTimeStamp()}] [ERROR] [${namespace}] ${message}`, object);
 	} else {
-		console.error(`[${getTimeStamp()}] [ERROR] [${namespace}] ${message}`);
+		console.error(`\n🆘 [${getTimeStamp()}] [ERROR] [${namespace}] ${message}`);
 	}
 };
 
 const getTimeStamp = (): string => {
-	return new Date().toISOString();
+	return new Date().toLocaleString();
 };
 
 export default {
