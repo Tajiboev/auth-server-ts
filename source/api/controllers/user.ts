@@ -33,15 +33,29 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
 };
 
 export const getUserById = async (req: Request, res: Response, next: NextFunction) => {
+	Logger.info('Controller - getUserById', `id: ${req.params.id}`);
 	const {id} = req.params;
+	if (!id) return next(new ErrorWithStatusCode('No id provided', 400));
 	try {
-		const user = await User.findOne({id: id}).exec();
+		const user = await User.findOne({_id: id}).exec();
 		if (user) res.status(200).json(user);
 		else {
 			return next(new ErrorWithStatusCode('Failed to retrieve user data', 404));
 		}
 	} catch (e) {
 		return next(new ErrorWithStatusCode('Failed to retrieve user data', 400));
+	}
+};
+
+export const getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
+	try {
+		const users = await User.find().exec();
+		if (users) res.status(200).json(users);
+		else {
+			return next(new ErrorWithStatusCode('Failed to retrieve all users', 404));
+		}
+	} catch (e) {
+		return next(new ErrorWithStatusCode('Failed to retrieve all users', 400));
 	}
 };
 

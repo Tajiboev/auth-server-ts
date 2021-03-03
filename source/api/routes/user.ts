@@ -1,13 +1,24 @@
 import express from 'express';
 const router = express.Router();
 
-import {getUserById, createUser} from '../controllers/user';
+import {getUserById, createUser, getAllUsers} from '../controllers/user';
 import methodError from '../helpers/MethodError';
+
+import checkExistingUser from '../middleware/checkExistingUser';
+
+router
+	.route('/register')
+	.post(checkExistingUser, createUser)
+	.all(methodError({allowed: ['POST']}));
 
 router
 	.route('/:id')
 	.get(getUserById)
-	.post(createUser)
+	.all(methodError({allowed: ['GET']}));
+
+router
+	.route('/')
+	.get(getAllUsers)
 	.all(methodError({allowed: ['GET']}));
 
 export = router;
