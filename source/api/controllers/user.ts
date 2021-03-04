@@ -9,6 +9,9 @@ import Logger from '../../utils/Logger';
 
 export const createUser = async (req: Request, res: Response, next: NextFunction) => {
 	const {email, password, name, accountType} = req.body;
+	if (!name || !password || !email || !accountType) {
+		return res.status(400).send({message: 'Missing fields'});
+	}
 
 	bcryptsjs.hash(password, 10, (hashError, hashedPassword) => {
 		if (hashError) return next(new ErrorWithStatusCode('Hash error', 500));
@@ -57,6 +60,12 @@ export const getAllUsers = async (req: Request, res: Response, next: NextFunctio
 	} catch (e) {
 		return next(new ErrorWithStatusCode('Failed to retrieve all users', 400));
 	}
+};
+
+export const updateUser = async (req: Request, res: Response, next: NextFunction) => {
+	const {id} = req.params;
+	const {update} = req.body;
+	User.findByIdAndUpdate({_id: id}, update);
 };
 
 // GET /api/users/:userid - get User
