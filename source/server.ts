@@ -3,13 +3,12 @@
 import {createServer} from 'http';
 import app from './app';
 import config from './config';
-import Logger from './utils/Logger';
 
 const server = createServer(app);
 const port = config.server.port;
 
 server.listen(port, () => {
-	Logger.info('server.ts', `⚡ Server listening on port ${port}...`);
+	console.info(`⚡ Server listening on port ${port}...`);
 });
 
 // TODO: implement multicore processing
