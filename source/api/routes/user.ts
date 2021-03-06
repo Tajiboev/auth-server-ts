@@ -1,18 +1,34 @@
 import express from 'express';
 const router = express.Router();
 
-import {getHash} from '../controllers/user';
-import methodError from '../helpers/MethodError';
+import {getAllUsers, getUserById, deleteUser} from '../controllers/user';
+import methodError from '../helpers/methodError';
 
 router
 	.route('/')
-	.get(getHash)
+	.get(getAllUsers)
+	// .post(createUser)
+	.all(methodError({allowed: ['GET']}));
+
+router
+	.route('/:id')
+	.get(getUserById)
+	.delete(deleteUser)
 	.all(methodError({allowed: ['GET']}));
 
 export = router;
 
-//routes
-// GET /api/users/:userid - get User
-// POST /api/users/ - create User
-// UPDATE /api/users/:userid
-// DELETE /api/users/:userid
+/* 
+	* primary routes
+	TODO: [get] users/ ---> find all users
+	TODO: [post] users/ ---> create new user
+	TODO: [get] users/:id ---> find single user details
+	TODO: [delete] users/:id ---> detete user
+*/
+
+/* 
+	* secondary routes
+	TODO: [get] users/verify/:token ---> verify user email
+	TODO: [post] users/updateEmail/ ---> change user email
+	TODO: [post] users/updatePassword/ ---> change user password
+*/

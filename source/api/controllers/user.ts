@@ -1,16 +1,41 @@
-import {Request, Response, NextFunction} from 'express';
-import ErrorWithStatusCode from '../../utils/ErrorWithStatusCode';
-import hashPassword from '../helpers/hashPassword';
+/* 
+	TODO: [get] users/ ---> find all users ✔️
+	TODO: [post] users/ ---> create new user 
+	TODO: [get] users/:id ---> find single user details ✔️
+	TODO: [delete] users/:id ---> detete user ✔️
+*/
 
-export const getHash = async (req: Request, res: Response, next: NextFunction) => {
-	const {password} = req.body;
-	hashPassword(password)
+import {NextFunction, Request, Response} from 'express';
+import User from '../models/user';
+
+export const getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
+	User.find()
 		.then((result) => {
-			console.log(result);
 			res.status(200).json({message: result});
 		})
-		.catch((error) => {
-			console.error(error, 'controller error');
-			return next(new ErrorWithStatusCode('WTF', 500));
+		.catch((err) => {
+			res.status(500).json({message: err.message});
+		});
+};
+
+export const getUserById = async (req: Request, res: Response, next: NextFunction) => {
+	const {id} = req.params;
+	User.findOne({_id: id})
+		.then((result) => {
+			res.status(200).json({message: result});
+		})
+		.catch((err) => {
+			res.status(500).json({message: err.message});
+		});
+};
+
+export const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
+	const {id} = req.params;
+	User.findOneAndDelete({_id: id})
+		.then((result) => {
+			res.status(200).json({message: result, removed: true});
+		})
+		.catch((err) => {
+			res.status(500).json({message: err.message});
 		});
 };
