@@ -2,6 +2,7 @@ import express, {NextFunction, Request, Response} from 'express';
 import {connect} from 'mongoose';
 import morgan from 'morgan';
 import cors from 'cors';
+// import compression from 'compression';
 
 import config from './config';
 
@@ -23,17 +24,18 @@ app.use(cors());
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
 app.use(morgan('dev'));
+// app.use(compression());
 
 app.use('/api/users', userRoutes);
 
 app.use((req, res, next) => {
 	const error = new ErrorWithStatusCode('Not found', 404);
-	res.status(error.statusCode).json({message: error.message});
 	next(error);
 });
 
 app.use((error: ErrorWithStatusCode, req: Request, res: Response, next: NextFunction) => {
-	res.status(error.statusCode || 500).json({message: error.message});
+	console.error('❌ ', error);
+	res.status(error.statusCode || 500).json({error: error.message});
 });
 
 export default app;

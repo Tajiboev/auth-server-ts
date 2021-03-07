@@ -1,10 +1,18 @@
 // import os from 'os';
 // import cluster from 'cluster';
-import {createServer} from 'http';
+import fs from 'fs';
+import {createServer} from 'https';
 import app from './app';
 import config from './config';
 
-const server = createServer(app);
+const key = fs.readFileSync(__dirname + '/ssl/privateKey.key');
+const cert = fs.readFileSync(__dirname + '/ssl/certificate.crt');
+const options = {
+	key,
+	cert
+};
+
+const server = createServer(options, app);
 const port = config.server.port;
 
 server.listen(port, () => {

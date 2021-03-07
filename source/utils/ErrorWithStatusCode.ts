@@ -4,9 +4,11 @@ interface IError extends Error {
 
 class ErrorWithStatusCode extends Error implements IError {
 	statusCode: number;
-	constructor(message: string, statusCode: number) {
+	errorObject?: Error;
+	constructor(message: string, statusCode: number, errorObject?: Error) {
 		super(message);
 		this.statusCode = statusCode;
+		this.errorObject = errorObject;
 	}
 }
 
