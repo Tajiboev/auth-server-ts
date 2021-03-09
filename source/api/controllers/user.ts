@@ -1,6 +1,6 @@
 /* 
 	TODO: [get] users/ ---> find all users ✔️
-	TODO: [post] users/ ---> create new user 
+	TODO: [post] users/ ---> create new user ✔️
 	TODO: [get] users/:id ---> find single user details ✔️
 	TODO: [delete] users/:id ---> detete user ✔️
 */
@@ -10,29 +10,29 @@ import ErrorWithStatusCode from '../../utils/ErrorWithStatusCode';
 import hashPassword from '../helpers/hashPassword';
 import User from '../models/user';
 
+import bcryptjs from 'bcryptjs';
+
 export const createUser = async (req: Request, res: Response, next: NextFunction) => {
-	const {name, email, password, accountType} = req.body;
-	if (!name || !email || !password || !accountType) res.status(400).json({message: 'Missing field(s)'});
-	hashPassword(password)
-		.then((hashedPassword) => {
+	const {name, email, password} = req.body;
+	if (!name || !email || !password) res.status(400).json({message: 'Missing field(s)'});
+
+	bcryptjs.hash(password, 10, (hashError, hashedPassword) => {
+		if (hashError) {
+			return next(new ErrorWithStatusCode('Could not hash password', 500, hashError));
+		} else {
 			User.create({
 				email: email,
 				password: hashedPassword,
-				accountType: accountType,
 				name: name
 			})
 				.then((user) => {
-					res.status(201).json({
-						user: user
-					});
+					res.status(201).json({user: user});
 				})
 				.catch((error) => {
 					return next(new ErrorWithStatusCode('Could not create user', 400, error));
 				});
-		})
-		.catch((hashError) => {
-			return next(new ErrorWithStatusCode('Could not hash password', 500, hashError));
-		});
+		}
+	});
 };
 
 export const getAllUsers = async (req: Request, res: Response, next: NextFunction) => {

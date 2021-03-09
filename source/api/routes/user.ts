@@ -14,7 +14,7 @@ router
 	.route('/:id')
 	.get(getUserById)
 	.delete(deleteUser)
-	.all(methodError({allowed: ['GET']}));
+	.all(methodError({allowed: ['GET', 'DELETE']}));
 
 export = router;
 
