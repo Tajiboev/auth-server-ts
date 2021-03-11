@@ -8,7 +8,7 @@ router
 	.route('/')
 	.get(getAllUsers)
 	.post(createUser)
-	.all(methodError({allowed: ['GET']}));
+	.all(methodError({allowed: ['GET', 'POST']}));
 
 router
 	.route('/:id')

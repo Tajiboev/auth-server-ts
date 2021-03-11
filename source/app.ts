@@ -6,7 +6,7 @@ import cors from 'cors';
 import config from './config';
 
 import userRoutes from './api/routes/user';
-import ErrorWithStatusCode from './utils/ErrorWithStatusCode';
+import {GeneralError} from './utils/error';
 
 const app = express();
 
@@ -16,7 +16,7 @@ connect(config.mongo.url, config.mongo.options)
 		console.info('✅ Connected to the database!');
 	})
 	.catch((error) => {
-		console.info('❌ Could not connect to the database');
+		console.error('❌ Could not connect to the database');
 	});
 
 app.use(cors());
@@ -27,13 +27,13 @@ app.use(morgan('dev'));
 app.use('/api/users', userRoutes);
 
 app.use((req, res, next) => {
-	const error = new ErrorWithStatusCode('Not found', 404);
+	const error = new GeneralError('Not found', 404);
 	next(error);
 });
 
-app.use((error: ErrorWithStatusCode, req: Request, res: Response, next: NextFunction) => {
+app.use((error: GeneralError, req: Request, res: Response, next: NextFunction) => {
 	console.error('❌ ', error);
-	res.status(error.statusCode || 500).json({error: error.message});
+	res.status(error.statusCode || 500).json({status: 'error', error: error.message});
 });
 
 export default app;

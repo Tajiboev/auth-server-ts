@@ -5,7 +5,7 @@ const methodError = (methods: {allowed: Array<string>}) => {
 		const allowedMethods = methods.allowed.join(', ').trim();
 		res.set('Allow', allowedMethods)
 			.status(405)
-			.json({message: `The ${req.method} method for the ${req.originalUrl} route is not supported.`});
+			.json({message: `${req.method} method for the ${req.originalUrl} route is not supported.`});
 	};
 };
 

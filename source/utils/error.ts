@@ -1,8 +1,9 @@
 interface IError extends Error {
 	statusCode: number;
+	errorObject?: Error;
 }
 
-class ErrorWithStatusCode extends Error implements IError {
+export class GeneralError extends Error implements IError {
 	statusCode: number;
 	errorObject?: Error;
 	constructor(message: string, statusCode: number, errorObject?: Error) {
@@ -11,5 +12,3 @@ class ErrorWithStatusCode extends Error implements IError {
 		this.errorObject = errorObject;
 	}
 }
-
-export default ErrorWithStatusCode;
