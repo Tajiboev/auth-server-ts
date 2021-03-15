@@ -16,7 +16,7 @@ connect(config.mongo.url, config.mongo.options)
 		console.info('✅ Connected to the database!');
 	})
 	.catch((error) => {
-		console.error('❌ Could not connect to the database');
+		console.error('❌ Could not connect to the database \n', error);
 	});
 
 app.use(cors());
