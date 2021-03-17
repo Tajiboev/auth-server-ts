@@ -6,6 +6,7 @@ import cors from 'cors';
 import config from './config';
 
 import userRoutes from './api/routes/user';
+import authRoutes from './api/routes/auth';
 import {GeneralError} from './utils/error';
 
 const app = express();
@@ -25,6 +26,7 @@ app.use(express.json());
 app.use(morgan('dev'));
 
 app.use('/api/users', userRoutes);
+app.use('/api/auth', authRoutes);
 
 app.use((req, res, next) => {
 	const error = new GeneralError('Not found', 404);

@@ -1,14 +1,13 @@
 import express from 'express';
 const router = express.Router();
 
-import {getAllUsers, getUserById, deleteUser, createUser} from '../controllers/user';
+import {getAllUsers, getUserById, deleteUser} from '../controllers/user';
 import methodError from '../helpers/methodError';
 
 router
 	.route('/')
 	.get(getAllUsers)
-	.post(createUser)
-	.all(methodError({allowed: ['GET', 'POST']}));
+	.all(methodError({allowed: ['GET']}));
 
 router
 	.route('/:id')
