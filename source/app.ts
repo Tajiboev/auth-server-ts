@@ -14,10 +14,10 @@ const app = express();
 // Connect DB
 connect(config.mongo.url, config.mongo.options)
 	.then((result) => {
-		console.info('✅ Connected to the database!');
+		console.info('\n✅ Connected to the database\n');
 	})
 	.catch((error) => {
-		console.error('❌ Could not connect to the database \n', error);
+		console.error('\n❌ Could not connect to the database \n', error);
 	});
 
 app.use(cors());
@@ -35,7 +35,7 @@ app.use((req, res, next) => {
 
 app.use((error: GeneralError, req: Request, res: Response, next: NextFunction) => {
 	console.error('❌ ', error);
-	res.status(error.statusCode || 500).json({status: 'error', error: error.message});
+	res.status(error.statusCode || 500).json({message: error.message});
 });
 
 export default app;

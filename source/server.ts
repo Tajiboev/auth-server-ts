@@ -16,7 +16,7 @@ const server = createServer(options, app);
 const port = config.server.port;
 
 server.listen(port, () => {
-	console.info(`\n⚡ Server listening on port ${port}!\n`);
+	console.info(`\n⚡ Server listening on port ${port}\n`);
 });
 
 // TODO: implement multicore processing
