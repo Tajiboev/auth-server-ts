@@ -16,6 +16,7 @@
 		"@types/cors": "^2.8.10",
 		"@types/dotenv": "^8.2.0",
 		"@types/express": "^4.17.11",
+		"@types/http-errors": "^1.8.0",
 		"@types/jsonwebtoken": "^8.5.0",
 		"@types/mongoose": "^5.10.3",
 		"@types/morgan": "^1.9.2",
@@ -27,6 +28,8 @@
 		"cors": "^2.8.5",
 		"dotenv": "^8.2.0",
 		"express": "^4.17.1",
+		"http-errors": "^1.8.0",
+		"joi": "^17.4.0",
 		"jsonwebtoken": "^8.5.1",
 		"mongoose": "^5.11.18",
 		"morgan": "^1.10.0"

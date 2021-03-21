@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import config from '../../config';
 
 const signJWT = (user: IUser): string => {
-	const payload = {_id: user._id, email: user.public.email};
+	const payload = {_id: user._id, email: user.email};
 
 	const token = jwt.sign(payload, config.jwt.key, {
 		expiresIn: '1d',
