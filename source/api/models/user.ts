@@ -1,4 +1,4 @@
-import mongoose, {Schema, Document} from 'mongoose';
+import mongoose, { Schema, Document, Model } from 'mongoose';
 import bcrypt from 'bcrypt';
 
 export interface IUser extends Document {
@@ -7,6 +7,7 @@ export interface IUser extends Document {
 	firstName: string;
 	lastName: string;
 	isVerified: boolean;
+	checkPassword(password: string): Promise<boolean>;
 }
 
 const UserSchema: Schema = new Schema(
@@ -19,7 +20,7 @@ const UserSchema: Schema = new Schema(
 			index: true,
 			lowercase: true
 		},
-		password: {type: String, required: true},
+		password: { type: String, required: true },
 		firstName: {
 			type: String,
 			required: [true, 'First name is required'],
@@ -32,15 +33,20 @@ const UserSchema: Schema = new Schema(
 			minlength: [2, "Last name can't be smaller than 2 characters"],
 			maxlength: [30, "Last name can't be greater than 30 characters"]
 		},
-		isVerified: {type: Boolean, default: false}
+		isVerified: { type: Boolean, default: false }
 	},
-	{strictQuery: true, timestamps: true}
+	{ strictQuery: true, timestamps: true }
 );
 
 UserSchema.pre('save', async function (this: IUser, next) {
 	if (!this.isModified('password')) next();
 	this.password = await bcrypt.hash(this.password, 10);
 	next();
+});
+
+UserSchema.method('checkPassword', async function (this: any, password: string): Promise<boolean> {
+	const result = await bcrypt.compare(password, this.password);
+	return result;
 });
 
 export default mongoose.model<IUser>('User', UserSchema);
