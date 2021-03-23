@@ -29,11 +29,11 @@ app.use('/api/users', userRoutes);
 app.use('/api/auth', authRoutes);
 
 app.use(async (req, res, next) => {
-	next(createHttpError(404, 'Not found'));
+	next(new createHttpError.NotFound());
 });
 
 app.use(async (error: HttpError, req: Request, res: Response, next: NextFunction) => {
-	console.error('\n❌ ', error.expose, error, '\n');
+	console.error('\n❌ ', { ...error }, '\n');
 	res.status(error.statusCode || 500).json({
 		error: {
 			statusCode: error.statusCode,

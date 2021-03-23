@@ -1,16 +1,16 @@
-import {IUser} from '../models/user';
 import jwt from 'jsonwebtoken';
+import { IUser } from '../models/user';
 import config from '../../config';
 
-const signJWT = (user: IUser): string => {
-	const payload = {_id: user._id, email: user.email};
+const signJWT = async (user: IUser): Promise<string | undefined | Error> => {
+	const payload = { _id: user._id };
 
-	const token = jwt.sign(payload, config.jwt.key, {
-		expiresIn: '1d',
-		issuer: config.jwt.issuer
+	return new Promise((resolve, reject) => {
+		jwt.sign(payload, config.jwt.secret, config.jwt.options, (err, token) => {
+			if (err) reject(err);
+			resolve(token);
+		});
 	});
-
-	return token;
 };
 
 export default signJWT;

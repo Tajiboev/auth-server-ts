@@ -7,7 +7,7 @@ const server = {
 	port: process.env.SERVER_PORT || 3001
 };
 
-const MONGO_OPTIONS = {useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true};
+const MONGO_OPTIONS = { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true };
 
 const mongo = {
 	password: process.env.MONGO_PASSWORD,
@@ -17,8 +17,11 @@ const mongo = {
 };
 
 const jwt = {
-	key: process.env.JWT_KEY || 'superencryptedsecret',
-	issuer: process.env.JWT_ISSUER || 'issuerName'
+	secret: process.env.JWT_KEY || 'superencryptedsecret',
+	options: {
+		issuer: process.env.JWT_ISSUER || 'issuerName',
+		expiresIn: '1d'
+	}
 };
 
 const config = {
