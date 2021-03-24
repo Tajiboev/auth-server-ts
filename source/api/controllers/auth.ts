@@ -10,7 +10,12 @@ import User from '../models/user';
 export const signup = async (req: Request, res: Response, next: NextFunction) => {
 	try {
 		const { email, password, firstName, lastName } = req.body;
+
+		const userExists = await User.exists({ email });
+		if (userExists) throw new createHttpError.Conflict('User with same email already exists');
+
 		const user = await User.create({ email, password, firstName, lastName });
+
 		res.status(201).json(user);
 	} catch (error) {
 		next(error);
@@ -24,7 +29,7 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
 
 	try {
 		const user = await User.findOne({ email });
-		if (!user) return next(new createHttpError.Unauthorized());
+		if (!user) throw new createHttpError.Unauthorized();
 
 		const pwdMatch = await user.checkPassword(password);
 		if (!pwdMatch) throw new createHttpError.Unauthorized();

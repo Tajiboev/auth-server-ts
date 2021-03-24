@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import createHttpError from 'http-errors';
-import createError from 'http-errors';
-import Joi, { ObjectSchema } from 'joi';
+import Joi from 'joi';
 
 const validationSchemas = {
 	signupSchema: Joi.object({
@@ -19,8 +18,8 @@ const validationSchemas = {
 
 const validate = (schemaName: 'signupSchema' | 'loginSchema') => {
 	return async (req: Request, res: Response, next: NextFunction) => {
-		const { error } = validationSchemas[schemaName].validate(req.body, { abortEarly: false });
-		if (error) return next(createHttpError(400, 'Validation error', error));
+		const { error } = await validationSchemas[schemaName].validateAsync(req.body, { abortEarly: false });
+		if (error) return next(createHttpError(422, 'Validation error', error));
 		next();
 	};
 };

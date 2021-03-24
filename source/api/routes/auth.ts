@@ -15,4 +15,14 @@ router
 	.post(validate('loginSchema'), login)
 	.all(methodError({ allowed: ['POST'] }));
 
-export = router;
+router
+	.route('/logout')
+	.post(validate('signupSchema'), signup)
+	.all(methodError({ allowed: ['POST'] }));
+
+router
+	.route('/refresh-token')
+	.post(validate('loginSchema'), login)
+	.all(methodError({ allowed: ['POST'] }));
+
+export default router;

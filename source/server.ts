@@ -1,22 +1,13 @@
 // import os from 'os';
 // import cluster from 'cluster';
-import fs from 'fs';
-import {createServer} from 'https';
+import { createServer } from 'https';
 import app from './app';
 import config from './config';
 
-const key = fs.readFileSync(__dirname + '/ssl/privateKey.key');
-const cert = fs.readFileSync(__dirname + '/ssl/certificate.crt');
-const options = {
-	key,
-	cert
-};
+const server = createServer(config.server.ssl, app);
 
-const server = createServer(options, app);
-const port = config.server.port;
-
-server.listen(port, () => {
-	console.info(`\n⚡ Server listening on port ${port}\n`);
+server.listen(config.server.port, () => {
+	console.info(`\n🚀 Server listening on port ${config.server.port}\n`);
 });
 
 // TODO: implement multicore processing
