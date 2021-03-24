@@ -20,7 +20,7 @@ const validationSchemas = {
 const validate = (schemaName: 'signupSchema' | 'loginSchema') => {
 	return async (req: Request, res: Response, next: NextFunction) => {
 		const { error } = validationSchemas[schemaName].validate(req.body, { abortEarly: false });
-		if (error) return next(createHttpError(400, 'Validation error', { error }));
+		if (error) return next(createHttpError(400, 'Validation error', error));
 		next();
 	};
 };

@@ -1,15 +1,13 @@
-import {Request, Response, NextFunction} from 'express';
+import { Request, Response, NextFunction } from 'express';
 import createHttpError from 'http-errors';
 
 export async function isAuthenticated(req: Request, res: Response, next: NextFunction) {
-	const {authorization} = req.headers;
+	const { authorization } = req.headers;
 
-	if (!authorization) return next(new createHttpError.Forbidden()); //401
-
-	if (!authorization.startsWith('Bearer')) return next(new createHttpError.Forbidden()); //401
+	if (!authorization || !authorization.startsWith('Bearer')) return next(createHttpError(401, 'Unathorized')); //401, 'Unathorized'
 
 	const split = authorization.split('Bearer ');
-	if (split.length !== 2) return next(new createHttpError.Forbidden()); //401
+	if (split.length !== 2) return next(createHttpError(401, 'Unathorized')); //401, 'Unathorized'
 
 	const token = split[1];
 
@@ -20,6 +18,6 @@ export async function isAuthenticated(req: Request, res: Response, next: NextFun
 		// res.locals = {...res.locals, uid: decodedToken.uid, role: decodedToken.role, email: decodedToken.email};
 		return next();
 	} catch (error) {
-		return next(new createHttpError.Forbidden());
+		return next(createHttpError(401, 'Unathorized', error));
 	}
 }
