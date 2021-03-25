@@ -40,8 +40,15 @@ const UserSchema: Schema = new Schema(
 
 UserSchema.pre('save', async function (this: IUser, next) {
 	if (!this.isModified('password')) next();
-	this.password = await bcrypt.hash(this.password, 10);
-	next();
+	try {
+		const salt = await bcrypt.genSalt(10);
+		const hashedPassword = await bcrypt.hash(this.password, salt);
+		this.password = hashedPassword;
+		next();
+	} catch (error) {
+		console.error('presave error ->', error);
+		next(error);
+	}
 });
 
 UserSchema.method('checkPassword', async function (this: any, password: string): Promise<boolean> {

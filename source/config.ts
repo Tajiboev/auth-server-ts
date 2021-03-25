@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
 import fs from 'fs';
+import crypto from 'crypto';
 
 dotenv.config();
 
@@ -22,9 +23,10 @@ const server = {
 };
 
 const jwt = {
-	secret: process.env.JWT_KEY || 'superencryptedsecret',
+	access_token_secret: process.env.JWT_ACCESS_TOKEN_SECRET || crypto.randomBytes(32).toString('hex'),
+	refresh_token_secret: process.env.JWT_REFRESH_TOKEN_SECRET || crypto.randomBytes(32).toString('hex'),
 	options: {
-		issuer: process.env.JWT_ISSUER || 'issuerName',
+		issuer: 'freelance.uz',
 		expiresIn: '1d'
 	}
 };

@@ -18,6 +18,6 @@ export async function isAuthenticated(req: Request, res: Response, next: NextFun
 		// res.locals = {...res.locals, uid: decodedToken.uid, role: decodedToken.role, email: decodedToken.email};
 		return next();
 	} catch (error) {
-		return next(createHttpError(401, 'Unathorized', error));
+		return next(createHttpError.Unauthorized);
 	}
 }

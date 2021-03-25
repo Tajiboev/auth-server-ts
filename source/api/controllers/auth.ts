@@ -3,6 +3,7 @@
 
 import { NextFunction, Request, Response } from 'express';
 import createHttpError from 'http-errors';
+import { signAccessToken } from '../helpers/signJWT';
 import User from '../models/user';
 
 //* [post] /signup ---> create user & return jwt
@@ -15,8 +16,9 @@ export const signup = async (req: Request, res: Response, next: NextFunction) =>
 		if (userExists) throw new createHttpError.Conflict('User with same email already exists');
 
 		const user = await User.create({ email, password, firstName, lastName });
+		const accessToken = await signAccessToken(user);
 
-		res.status(201).json(user);
+		res.status(201).json({ ...user, accessToken });
 	} catch (error) {
 		next(error);
 	}
@@ -34,7 +36,9 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
 		const pwdMatch = await user.checkPassword(password);
 		if (!pwdMatch) throw new createHttpError.Unauthorized();
 
-		res.status(200).json(user);
+		const accessToken = await signAccessToken(user);
+
+		res.status(200).json({ ...user, accessToken });
 	} catch (error) {
 		next(error);
 	}
