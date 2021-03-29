@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import createHttpError from 'http-errors';
 
-export async function isAuthenticated(req: Request, res: Response, next: NextFunction) {
+const checkAuth = async (req: Request, res: Response, next: NextFunction) => {
 	const { authorization } = req.headers;
 
 	if (!authorization || !authorization.startsWith('Bearer')) return next(createHttpError(401, 'Unathorized')); //401, 'Unathorized'
@@ -20,4 +20,6 @@ export async function isAuthenticated(req: Request, res: Response, next: NextFun
 	} catch (error) {
 		return next(createHttpError.Unauthorized);
 	}
-}
+};
+
+export default checkAuth;
