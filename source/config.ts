@@ -23,8 +23,8 @@ const server = {
 };
 
 const jwt = {
-	access_token_secret: process.env.JWT_ACCESS_TOKEN_SECRET || crypto.randomBytes(32).toString('hex'),
-	refresh_token_secret: process.env.JWT_REFRESH_TOKEN_SECRET || crypto.randomBytes(32).toString('hex'),
+	access_token_secret: process.env.JWT_ACCESS_TOKEN_SECRET || 'supersecretkey',
+	refresh_token_secret: process.env.JWT_REFRESH_TOKEN_SECRET,
 	options: {
 		issuer: 'freelance.uz',
 		expiresIn: '1d'
