@@ -24,11 +24,7 @@ const server = {
 
 const jwt = {
 	access_token_secret: process.env.JWT_ACCESS_TOKEN_SECRET || 'supersecretkey',
-	refresh_token_secret: process.env.JWT_REFRESH_TOKEN_SECRET,
-	options: {
-		issuer: 'freelance.uz',
-		expiresIn: '1d'
-	}
+	refresh_token_secret: process.env.JWT_REFRESH_TOKEN_SECRET || 'supersecretrefreshkey'
 };
 
 const config = {
