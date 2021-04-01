@@ -1,9 +1,8 @@
-import jwt from 'jsonwebtoken';
+import jwt, { JsonWebTokenError } from 'jsonwebtoken';
 import { IUser } from '../models/user';
 import config from '../../config';
-import createHttpError from 'http-errors';
 
-export const signToken = async (tokenType: 'access' | 'refresh', user: IUser): Promise<string | undefined | Error> => {
+export const signToken = (tokenType: 'access' | 'refresh', user: IUser): Promise<string | undefined | Error> => {
 	const payload = tokenType === 'access' ? { _id: user._id } : {};
 
 	return new Promise((resolve, reject) => {
@@ -13,25 +12,26 @@ export const signToken = async (tokenType: 'access' | 'refresh', user: IUser): P
 			{ issuer: 'freelance.uz', expiresIn: tokenType === 'access' ? '1d' : '1y', audience: user._id },
 			(err, token) => {
 				if (err) {
-					reject(createHttpError[500]);
+					reject(err);
 				}
 				resolve(token);
 			}
 		);
 	});
 };
-export const verifyToken = async (
+
+export const verifyToken = (
 	tokenType: 'access' | 'refresh',
 	token: string
-): Promise<string | undefined | Error> => {
-	const payload = tokenType === 'access' ? { _id: user._id } : {};
+): Promise<object | undefined | JsonWebTokenError> => {
+	const tokenSecret = tokenType === 'access' ? 'access_token_secret' : 'refresh_token_secret';
 
 	return new Promise((resolve, reject) => {
-		jwt.verify(token, config.jwt.access_token_secret, (err, token) => {
+		jwt.verify(token, config.jwt[tokenSecret], (err, decoded) => {
 			if (err) {
-				reject(createHttpError[500]);
+				reject(err);
 			}
-			resolve(token);
+			resolve(decoded);
 		});
 	});
 };

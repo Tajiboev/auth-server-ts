@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import createHttpError from 'http-errors';
-import jwt, { JsonWebTokenError } from 'jsonwebtoken';
-import config from '../../config';
+import { verifyToken } from '../helpers/signJWT';
 
 const checkAuth = async (req: Request, res: Response, next: NextFunction) => {
 	const { authorization } = req.headers;
@@ -14,16 +13,12 @@ const checkAuth = async (req: Request, res: Response, next: NextFunction) => {
 	const token = split[1];
 
 	try {
-		jwt.verify(token, config.jwt.access_token_secret, (err, payload) => {
-			if (err) {
-				const errorMessage = err.name === 'JsonWebTokenError' ? 'Unathorized' : err.message;
-				throw new createHttpError.Unauthorized(errorMessage);
-			}
-			res.locals = { ...res.locals, authorized: true, ...payload };
-			next();
-		});
+		const decoded = await verifyToken('access', token);
+		res.locals = { ...res.locals, authorized: true, ...decoded };
+		next();
 	} catch (error) {
-		return next(error);
+		const errorMessage = error.name === 'JsonWebTokenError' ? 'Unathorized' : error.message;
+		return next(new createHttpError.Unauthorized(errorMessage));
 	}
 };
 
