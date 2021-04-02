@@ -3,7 +3,7 @@
 
 import { NextFunction, Request, Response } from 'express';
 import createHttpError from 'http-errors';
-import { signToken } from '../helpers/signJWT';
+import { signToken, verifyToken } from '../helpers/signJWT';
 import User from '../models/user';
 
 //* [post] /signup ---> create user & return jwt
@@ -39,6 +39,23 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
 		const accessToken = await signToken('access', user);
 
 		res.status(200).json({ ...user, accessToken });
+	} catch (error) {
+		next(error);
+	}
+};
+
+export const verify = async (req: Request, res: Response, next: NextFunction) => {
+	const { id, token } = req.params;
+
+	try {
+		// const decoded = await verifyToken('access', token);
+		const user = await User.findOne({ _id: id });
+		if (!user) throw new createHttpError.NotFound();
+
+		user.isVerified = true;
+		const updatedUser = await user.save();
+
+		res.status(200).json({ ...updatedUser });
 	} catch (error) {
 		next(error);
 	}
