@@ -1,5 +1,6 @@
-import mongoose, { Schema, Document, Model } from 'mongoose';
+import mongoose, { Schema, Document } from 'mongoose';
 import bcrypt from 'bcrypt';
+import { string } from 'joi';
 
 export interface IUser extends Document {
 	email: string;
@@ -7,6 +8,7 @@ export interface IUser extends Document {
 	firstName: string;
 	lastName: string;
 	isVerified: boolean;
+	verificationToken?: string;
 	checkPassword(password: string): Promise<boolean>;
 }
 
@@ -33,7 +35,8 @@ const UserSchema: Schema = new Schema(
 			minlength: [2, "Last name can't be smaller than 2 characters"],
 			maxlength: [30, "Last name can't be greater than 30 characters"]
 		},
-		isVerified: { type: Boolean, default: false }
+		isVerified: { type: Boolean, default: false },
+		verificationToken: { type: String }
 	},
 	{ strictQuery: true, timestamps: true }
 );

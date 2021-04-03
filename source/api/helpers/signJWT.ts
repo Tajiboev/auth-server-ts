@@ -4,11 +4,12 @@ import config from '../../config';
 
 export const signToken = (tokenType: 'access' | 'refresh', user: IUser): Promise<string | undefined | Error> => {
 	const payload = tokenType === 'access' ? { _id: user._id } : {};
+	const tokenSecret = tokenType === 'access' ? 'access_token_secret' : 'refresh_token_secret';
 
 	return new Promise((resolve, reject) => {
 		jwt.sign(
 			payload,
-			config.jwt.access_token_secret,
+			config.jwt[tokenSecret],
 			{ issuer: 'freelance.uz', expiresIn: tokenType === 'access' ? '1d' : '1y', audience: user._id },
 			(err, token) => {
 				if (err) {
