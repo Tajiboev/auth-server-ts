@@ -24,7 +24,7 @@ const server = {
 
 const jwt = {
 	access_token_secret: process.env.JWT_ACCESS_TOKEN_SECRET || 'supersecretkey',
-	refresh_token_secret: process.env.JWT_REFRESH_TOKEN_SECRET || 'supersecretrefreshkey'
+	common_token_secret: process.env.JWT_COMMON_TOKEN_SECRET || 'supersecretrefreshkey'
 };
 
 const config = {

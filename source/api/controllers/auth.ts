@@ -3,7 +3,7 @@
 
 import { NextFunction, Request, Response } from 'express';
 import createHttpError from 'http-errors';
-import { signToken, verifyToken } from '../helpers/signJWT';
+import { signToken, verifyToken } from '../helpers/jwtHelpers';
 import User from '../models/user';
 
 //* [post] /signup ---> create user & return jwt
@@ -16,7 +16,7 @@ export const signup = async (req: Request, res: Response, next: NextFunction) =>
 		if (userExists) throw new createHttpError.Conflict('User with same email already exists');
 
 		const user = await User.create({ email, password, firstName, lastName });
-		const accessToken = await signToken('access', user);
+		const accessToken = await signToken(user, 'access');
 
 		res.status(201).json({ ...user, accessToken });
 	} catch (error) {
@@ -36,7 +36,7 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
 		const pwdMatch = await user.checkPassword(password);
 		if (!pwdMatch) throw new createHttpError.Unauthorized();
 
-		const accessToken = await signToken('access', user);
+		const accessToken = await signToken(user, 'access');
 
 		res.status(200).json({ ...user, accessToken });
 	} catch (error) {
@@ -44,18 +44,16 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
 	}
 };
 
-export const verify = async (req: Request, res: Response, next: NextFunction) => {
+export const verifyEmail = async (req: Request, res: Response, next: NextFunction) => {
 	const { id, token } = req.params;
 
 	try {
-		// const decoded = await verifyToken('access', token);
-		const user = await User.findOne({ _id: id });
-		if (!user) throw new createHttpError.NotFound();
+		const validToken = await verifyToken(token);
+		if (!validToken) throw new createHttpError.BadRequest();
 
-		user.isVerified = true;
-		const updatedUser = await user.save();
-
-		res.status(200).json({ ...updatedUser });
+		const updated = await User.updateOne({ _id: id }, { isVerified: true }).exec();
+		console.log(updated);
+		res.status(200).json({ message: 'Email has been verified!' });
 	} catch (error) {
 		next(error);
 	}
