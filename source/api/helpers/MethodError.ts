@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 
-const methodError = (methods: { allowed: Array<string> }) => {
+const methodError = (methods: { allowed: string[] }) => {
 	return (req: Request, res: Response, next: NextFunction) => {
 		const allowedMethods = methods.allowed.join(', ').trim();
 		res.set('Allow', allowedMethods)

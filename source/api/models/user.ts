@@ -1,6 +1,5 @@
 import mongoose, { Schema, Document } from 'mongoose';
 import bcrypt from 'bcrypt';
-import { string } from 'joi';
 
 export interface IUser extends Document {
 	email: string;
@@ -49,7 +48,7 @@ UserSchema.pre('save', async function (this: IUser, next) {
 		this.password = hashedPassword;
 		next();
 	} catch (error) {
-		console.error('presave error ->', error);
+		console.error('presave error', error);
 		next(error);
 	}
 });

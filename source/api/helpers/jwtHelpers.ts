@@ -2,7 +2,7 @@ import jwt, { JsonWebTokenError } from 'jsonwebtoken';
 import { IUser } from '../models/user';
 import config from '../../config';
 
-export const signToken = (user: IUser, tokenType: 'access' | 'common'): Promise<string | undefined | Error> => {
+export const signToken = (tokenType: 'access' | 'common', user: IUser): Promise<string | undefined | Error> => {
 	const payload = { _id: user._id };
 	const secret = tokenType === 'access' ? 'access_token_secret' : 'common_token_secret';
 	const tokenSecret = config.jwt[secret];
@@ -15,8 +15,12 @@ export const signToken = (user: IUser, tokenType: 'access' | 'common'): Promise<
 	});
 };
 
-export const verifyToken = (token: string): Promise<object | undefined | JsonWebTokenError> => {
-	const tokenSecret = config.jwt.access_token_secret;
+export const verifyToken = (
+	tokenType: 'access' | 'common',
+	token: string
+): Promise<object | undefined | JsonWebTokenError> => {
+	const secret = tokenType === 'access' ? 'access_token_secret' : 'common_token_secret';
+	const tokenSecret = config.jwt[secret];
 
 	return new Promise((resolve, reject) => {
 		jwt.verify(token, tokenSecret, (err, decoded) => {

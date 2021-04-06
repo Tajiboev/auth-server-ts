@@ -21,9 +21,4 @@ router
 	.post(signup)
 	.all(methodError({ allowed: ['POST'] }));
 
-router
-	.route('/refresh-token')
-	.post(login)
-	.all(methodError({ allowed: ['POST'] }));
-
 export default router;

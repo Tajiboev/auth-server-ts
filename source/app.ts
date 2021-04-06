@@ -16,11 +16,7 @@ app.use(
 		level: 6,
 		threshold: 1024,
 		filter: (req, res) => {
-			if (req.headers['x-no-compression']) {
-				// don't compress responses with this request header
-				return false;
-			}
-			// fallback to standard filter function
+			if (req.headers['x-no-compression']) return false;
 			return compression.filter(req, res);
 		}
 	})

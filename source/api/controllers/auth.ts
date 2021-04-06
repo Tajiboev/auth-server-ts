@@ -4,6 +4,7 @@
 import { NextFunction, Request, Response } from 'express';
 import createHttpError from 'http-errors';
 import { signToken, verifyToken } from '../helpers/jwtHelpers';
+import BlacklistedTokens from '../models/blacklistedtoken';
 import User from '../models/user';
 
 //* [post] /signup ---> create user & return jwt
@@ -16,7 +17,7 @@ export const signup = async (req: Request, res: Response, next: NextFunction) =>
 		if (userExists) throw new createHttpError.Conflict('User with same email already exists');
 
 		const user = await User.create({ email, password, firstName, lastName });
-		const accessToken = await signToken(user, 'access');
+		const accessToken = await signToken('access', user);
 
 		res.status(201).json({ ...user, accessToken });
 	} catch (error) {
@@ -36,7 +37,7 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
 		const pwdMatch = await user.checkPassword(password);
 		if (!pwdMatch) throw new createHttpError.Unauthorized();
 
-		const accessToken = await signToken(user, 'access');
+		const accessToken = await signToken('access', user);
 
 		res.status(200).json({ ...user, accessToken });
 	} catch (error) {
@@ -48,12 +49,23 @@ export const verifyEmail = async (req: Request, res: Response, next: NextFunctio
 	const { id, token } = req.params;
 
 	try {
-		const validToken = await verifyToken(token);
-		if (!validToken) throw new createHttpError.BadRequest();
+		const decoded = await verifyToken('common', token);
+		if (!decoded) throw new createHttpError.BadRequest();
 
 		const updated = await User.updateOne({ _id: id }, { isVerified: true }).exec();
 		console.log(updated);
 		res.status(200).json({ message: 'Email has been verified!' });
+	} catch (error) {
+		next(error);
+	}
+};
+
+export const logout = async (req: Request, res: Response, next: NextFunction) => {
+	const { token } = req.body;
+
+	try {
+		const blacklistedtoken = await BlacklistedTokens.create({ token });
+		res.status(200).json({ message: 'Logout success' });
 	} catch (error) {
 		next(error);
 	}

@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import createHttpError from 'http-errors';
 import { verifyToken } from '../helpers/jwtHelpers';
+import blacklistedtokens from '../models/blacklistedtoken';
 
 const checkAuth = async (req: Request, res: Response, next: NextFunction) => {
 	const { authorization } = req.headers;
@@ -13,7 +14,10 @@ const checkAuth = async (req: Request, res: Response, next: NextFunction) => {
 	const token = split[1];
 
 	try {
-		const decoded = await verifyToken(token);
+		const isBlacklisted = await blacklistedtokens.exists({ token });
+		if (isBlacklisted) throw new createHttpError.Unauthorized();
+
+		const decoded = await verifyToken('access', token);
 		res.locals = { ...res.locals, authorized: true, ...decoded };
 		next();
 	} catch (error) {
