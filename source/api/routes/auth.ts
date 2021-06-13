@@ -3,7 +3,7 @@ const router = express.Router();
 
 import methodError from '../helpers/methodError';
 import { signup, login } from '../controllers/auth';
-import { signupSchema } from '../helpers/validationSchemas';
+import { loginSchema, signupSchema } from '../helpers/validationSchemas';
 import { validateBody } from '../middleware/validators';
 
 router
@@ -13,12 +13,7 @@ router
 
 router
 	.route('/login')
-	.post(login)
-	.all(methodError({ allowed: ['POST'] }));
-
-router
-	.route('/logout')
-	.post(signup)
+	.post(validateBody(loginSchema), login)
 	.all(methodError({ allowed: ['POST'] }));
 
 export default router;

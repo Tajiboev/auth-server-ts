@@ -1,10 +1,6 @@
-/*
- */
-
 import { NextFunction, Request, Response } from 'express';
 import createHttpError from 'http-errors';
-import { signToken, verifyToken } from '../helpers/jwtHelpers';
-import BlacklistedTokens from '../models/blacklistedtoken';
+import { signToken } from '../helpers/jwtHelpers';
 import User from '../models/user';
 
 //* [post] /signup ---> create user & return jwt
@@ -25,8 +21,6 @@ export const signup = async (req: Request, res: Response, next: NextFunction) =>
 	}
 };
 
-//* [post] /login ---> find user & return jwt
-
 export const login = async (req: Request, res: Response, next: NextFunction) => {
 	const { email, password } = req.body;
 
@@ -40,32 +34,6 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
 		const accessToken = await signToken('access', user);
 
 		res.status(200).json({ ...user, accessToken });
-	} catch (error) {
-		next(error);
-	}
-};
-
-export const verifyEmail = async (req: Request, res: Response, next: NextFunction) => {
-	const { id, token } = req.params;
-
-	try {
-		const decoded = await verifyToken('common', token);
-		if (!decoded) throw new createHttpError.BadRequest();
-
-		const updated = await User.updateOne({ _id: id }, { isVerified: true }).exec();
-		console.log(updated);
-		res.status(200).json({ message: 'Email has been verified!' });
-	} catch (error) {
-		next(error);
-	}
-};
-
-export const logout = async (req: Request, res: Response, next: NextFunction) => {
-	const { token } = req.body;
-
-	try {
-		const blacklistedtoken = await BlacklistedTokens.create({ token });
-		res.status(200).json({ message: 'Logout success' });
 	} catch (error) {
 		next(error);
 	}

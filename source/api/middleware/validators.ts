@@ -5,7 +5,7 @@ import { Schema } from 'joi';
 export const validateBody = (schema: Schema) => {
 	return async (req: Request, res: Response, next: NextFunction) => {
 		try {
-			const { error } = await schema.validateAsync(req.body, { abortEarly: false });
+			const { error } = await schema.validateAsync(req.body);
 			if (error) throw createHttpError(400, 'Invalid request body');
 			next();
 		} catch (error) {

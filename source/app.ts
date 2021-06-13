@@ -27,6 +27,7 @@ app.use(express.json());
 app.use(morgan('dev'));
 
 app.use('/auth', authRoutes);
+// app.use('/api', apiRoutes);
 
 app.use(async (req, res, next) => {
 	next(new createHttpError.NotFound());
