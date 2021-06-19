@@ -1,6 +1,5 @@
 import dotenv from 'dotenv';
 import fs from 'fs';
-import crypto from 'crypto';
 
 dotenv.config();
 
@@ -22,15 +21,9 @@ const server = {
 	}
 };
 
-const jwt = {
+const jwtSecrets = {
 	access_token_secret: process.env.JWT_ACCESS_TOKEN_SECRET || 'supersecretkey',
 	common_token_secret: process.env.JWT_COMMON_TOKEN_SECRET || 'supersecretrefreshkey'
 };
 
-const config = {
-	server,
-	mongo,
-	jwt
-};
-
-export default config;
+export { server, mongo, jwtSecrets };

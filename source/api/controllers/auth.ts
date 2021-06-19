@@ -1,11 +1,9 @@
 import { NextFunction, Request, Response } from 'express';
 import createHttpError from 'http-errors';
-import { signToken } from '../helpers/jwtHelpers';
 import User from '../models/user';
+import { sign } from '../utils/jwt';
 
-//* [post] /signup ---> create user & return jwt
-
-export const signup = async (req: Request, res: Response, next: NextFunction) => {
+const signup = async (req: Request, res: Response, next: NextFunction) => {
 	try {
 		const { email, password, firstName, lastName } = req.body;
 
@@ -13,28 +11,30 @@ export const signup = async (req: Request, res: Response, next: NextFunction) =>
 		if (userExists) throw new createHttpError.Conflict('User with same email already exists');
 
 		const user = await User.create({ email, password, firstName, lastName });
-		const accessToken = await signToken('access', user);
+		const token = await sign(user);
 
-		res.status(201).json({ ...user, accessToken });
+		res.status(201).json({ ...user, token });
 	} catch (error) {
 		next(error);
 	}
 };
 
-export const login = async (req: Request, res: Response, next: NextFunction) => {
+const login = async (req: Request, res: Response, next: NextFunction) => {
 	const { email, password } = req.body;
 
 	try {
 		const user = await User.findOne({ email });
 		if (!user) throw new createHttpError.Unauthorized();
 
-		const pwdMatch = await user.checkPassword(password);
+		const pwdMatch = user.password === password;
 		if (!pwdMatch) throw new createHttpError.Unauthorized();
 
-		const accessToken = await signToken('access', user);
+		const token = await sign(user);
 
-		res.status(200).json({ ...user, accessToken });
+		res.status(200).json({ ...user, token });
 	} catch (error) {
 		next(error);
 	}
 };
+
+export { signup, login };

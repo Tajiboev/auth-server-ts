@@ -1,15 +1,5 @@
-import mongoose, { Schema, Document } from 'mongoose';
-import bcrypt from 'bcrypt';
-
-export interface IUser extends Document {
-	email: string;
-	password: string;
-	firstName: string;
-	lastName: string;
-	isVerified: boolean;
-	verificationToken?: string;
-	checkPassword(password: string): Promise<boolean>;
-}
+import mongoose, { Schema } from 'mongoose';
+import { IUser } from '../utils/interfaces';
 
 const UserSchema: Schema = new Schema(
 	{
@@ -34,29 +24,32 @@ const UserSchema: Schema = new Schema(
 			minlength: [2, "Last name can't be smaller than 2 characters"],
 			maxlength: [30, "Last name can't be greater than 30 characters"]
 		},
-		isVerified: { type: Boolean, default: false },
-		verificationToken: { type: String }
+		projects: [
+			{
+				type: Schema.Types.ObjectId,
+				ref: 'project'
+			}
+		],
+		contests: [
+			{
+				type: Schema.Types.ObjectId,
+				ref: 'contest'
+			}
+		],
+		proposals: [
+			{
+				type: Schema.Types.ObjectId,
+				ref: 'proposal'
+			}
+		],
+		entries: [
+			{
+				type: Schema.Types.ObjectId,
+				ref: 'entry'
+			}
+		]
 	},
 	{ strictQuery: true, timestamps: true }
 );
-
-UserSchema.pre('save', async function (this: IUser, next) {
-	if (!this.isModified('password')) next();
-	try {
-		const salt = await bcrypt.genSalt(10);
-		const hashedPassword = await bcrypt.hash(this.password, salt);
-		this.password = hashedPassword;
-		next();
-	} catch (error) {
-		console.error('presave error', error);
-		next(error);
-	}
-});
-
-//todo: => rethink this function (specifically this:any)
-UserSchema.method('checkPassword', async function (this: any, password: string): Promise<boolean> {
-	const result = await bcrypt.compare(password, this.password);
-	return result;
-});
 
 export default mongoose.model<IUser>('User', UserSchema);
