@@ -1,7 +1,7 @@
 import { connect, connection } from 'mongoose';
-import config from './config';
+import { mongo } from './config';
 
-connect(config.mongo.url, config.mongo.options)
+connect(mongo.url, mongo.options)
 	.then((result) => {
 		console.info('\n✅ Connected to the database\n');
 	})

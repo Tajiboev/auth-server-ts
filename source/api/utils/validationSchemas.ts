@@ -12,4 +12,11 @@ const loginSchema = Joi.object({
 	password: Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{8,24}$'))
 });
 
-export { signupSchema, loginSchema };
+const projectSchema = Joi.object({
+	title: Joi.string().required(),
+	description: Joi.string().required(),
+	budget: Joi.string().required(),
+	deadline: Joi.date().required()
+});
+
+export { signupSchema, loginSchema, projectSchema };

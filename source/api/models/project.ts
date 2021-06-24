@@ -1,4 +1,4 @@
-import mongoose, { Schema } from 'mongoose';
+import { model, Schema } from 'mongoose';
 import { IProject } from '../utils/interfaces';
 
 const ProjectSchema: Schema = new Schema(
@@ -20,4 +20,8 @@ const ProjectSchema: Schema = new Schema(
 	{ strictQuery: true, timestamps: true }
 );
 
-export default mongoose.model<IProject>('project', ProjectSchema);
+ProjectSchema.methods.addProposal = function (this: any, proposal) {
+	this.proposals.push(proposal);
+};
+
+export default model<IProject>('project', ProjectSchema);

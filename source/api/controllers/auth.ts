@@ -1,6 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
 import createHttpError from 'http-errors';
 import User from '../models/user';
+// import jwt from 'jsonwebtoken';
+// import { jwtSecrets } from '../../config';
 import { sign } from '../utils/jwt';
 
 const signup = async (req: Request, res: Response, next: NextFunction) => {
@@ -11,9 +13,10 @@ const signup = async (req: Request, res: Response, next: NextFunction) => {
 		if (userExists) throw new createHttpError.Conflict('User with same email already exists');
 
 		const user = await User.create({ email, password, firstName, lastName });
-		const token = await sign(user);
 
-		res.status(201).json({ ...user, token });
+		const token = await sign(user._id);
+
+		res.status(201).json({ user, token });
 	} catch (error) {
 		next(error);
 	}
@@ -24,14 +27,14 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
 
 	try {
 		const user = await User.findOne({ email });
-		if (!user) throw new createHttpError.Unauthorized();
+		if (!user) throw new createHttpError.Unauthorized('No user');
 
 		const pwdMatch = user.password === password;
-		if (!pwdMatch) throw new createHttpError.Unauthorized();
+		if (!pwdMatch) throw new createHttpError.Unauthorized('PWD mismatch');
 
-		const token = await sign(user);
+		const token = await sign(user._id);
 
-		res.status(200).json({ ...user, token });
+		res.status(200).json({ user, token });
 	} catch (error) {
 		next(error);
 	}

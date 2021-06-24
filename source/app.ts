@@ -1,10 +1,11 @@
-import express, { NextFunction, Request, Response } from 'express';
+import express from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
-import createHttpError, { HttpError } from 'http-errors';
 
 import authRoutes from './api/routes/auth';
+import projectRoutes from './api/routes/projects';
 import compression from 'compression';
+import { errorHandler, notFound } from './errorHandler';
 
 const app = express();
 
@@ -27,20 +28,10 @@ app.use(express.json());
 app.use(morgan('dev'));
 
 app.use('/auth', authRoutes);
-// app.use('/api', apiRoutes);
+app.use('/projects', projectRoutes);
 
-app.use(async (req, res, next) => {
-	next(new createHttpError.NotFound());
-});
-
-app.use(async (error: HttpError, req: Request, res: Response, next: NextFunction) => {
-	console.error(error);
-	res.status(error.statusCode || 500).json({
-		error: {
-			statusCode: error.statusCode,
-			message: error.message
-		}
-	});
-});
+//errors
+app.use(notFound);
+app.use(errorHandler);
 
 export default app;

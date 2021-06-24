@@ -1,20 +1,22 @@
 import dotenv from 'dotenv';
 import fs from 'fs';
 
-dotenv.config();
+const config = dotenv.config();
+if (config.error || !config.parsed) throw config.error;
+const env = config.parsed;
 
 const MONGO_OPTIONS = { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true };
 
 const mongo = {
-	password: process.env.MONGO_PASSWORD,
-	dbname: process.env.MONGO_DBNAME,
+	password: env.MONGO_PASSWORD,
+	dbname: env.MONGO_DBNAME,
 	options: MONGO_OPTIONS,
-	url: `mongodb+srv://Mukhammadjon:${process.env.MONGO_PASSWORD}@authcluster.9oliw.mongodb.net/${process.env.MONGO_DBNAME}?retryWrites=true&w=majority`
+	url: `mongodb+srv://dbadmin:${env.MONGO_PASSWORD}@cluster0.9oliw.mongodb.net/${env.MONGO_DBNAME}?retryWrites=true&w=majority`
 };
 
-const server = {
-	hostname: process.env.SERVER_HOSTNAME || 'localhost',
-	port: process.env.SERVER_PORT || 5000,
+const serverConfig = {
+	hostname: env.SERVER_HOSTNAME || 'localhost',
+	port: env.SERVER_PORT || 5000,
 	ssl: {
 		key: fs.readFileSync(__dirname + '/ssl/privateKey.key'),
 		cert: fs.readFileSync(__dirname + '/ssl/certificate.crt')
@@ -22,8 +24,7 @@ const server = {
 };
 
 const jwtSecrets = {
-	access_token_secret: process.env.JWT_ACCESS_TOKEN_SECRET || 'supersecretkey',
-	common_token_secret: process.env.JWT_COMMON_TOKEN_SECRET || 'supersecretrefreshkey'
+	token_secret: env.JWT_ACCESS_TOKEN_SECRET || 'supersecretkey'
 };
 
-export { server, mongo, jwtSecrets };
+export { serverConfig, mongo, jwtSecrets };

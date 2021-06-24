@@ -1,31 +1,13 @@
-import jwt from 'jsonwebtoken';
 import { jwtSecrets } from '../../config';
-import { IUser } from './interfaces';
+import jwt from 'jsonwebtoken';
 
-const sign = (user: IUser) => {
-	let result = new Promise((resolve, reject) => {
-		jwt.sign({ id: user._id }, jwtSecrets.access_token_secret, { algorithm: 'RS256' }, function (err, token) {
-			if (err) {
-				reject(err);
-			} else {
-				resolve(token);
-			}
+const sign = (id: string): Promise<Error | string | undefined> => {
+	return new Promise((resolve, reject) => {
+		jwt.sign({ id }, jwtSecrets.token_secret, { expiresIn: '1d' }, (err, token) => {
+			if (err) reject(err);
+			resolve(token);
 		});
 	});
-	return result;
 };
 
-const decode = (token: string) => {
-	let result = new Promise((resolve, reject) => {
-		jwt.verify(token, jwtSecrets.access_token_secret, function (err, decoded) {
-			if (err) {
-				reject(err);
-			} else {
-				resolve(decoded);
-			}
-		});
-	});
-	return result;
-};
-
-export { sign, decode };
+export { sign };

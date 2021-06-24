@@ -1,10 +1,10 @@
 import express from 'express';
 const router = express.Router();
 
-import methodError from '../helpers/methodError';
+import methodError from '../utils/methodError';
 import { signup, login } from '../controllers/auth';
-import { loginSchema, signupSchema } from '../helpers/validationSchemas';
-import { validateBody } from '../middleware/validators';
+import { loginSchema, signupSchema } from '../utils/validationSchemas';
+import validateBody from '../middleware/validateBody';
 
 router
 	.route('/signup')
