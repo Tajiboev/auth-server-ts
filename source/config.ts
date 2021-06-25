@@ -5,7 +5,12 @@ const config = dotenv.config();
 if (config.error || !config.parsed) throw config.error;
 const env = config.parsed;
 
-const MONGO_OPTIONS = { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true };
+const MONGO_OPTIONS = {
+	useNewUrlParser: true,
+	useUnifiedTopology: true,
+	useCreateIndex: true,
+	useFindAndModify: false
+};
 
 const mongo = {
 	password: env.MONGO_PASSWORD,

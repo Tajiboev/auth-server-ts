@@ -20,8 +20,4 @@ const ProjectSchema: Schema = new Schema(
 	{ strictQuery: true, timestamps: true }
 );
 
-ProjectSchema.methods.addProposal = function (this: any, proposal) {
-	this.proposals.push(proposal);
-};
-
 export default model<IProject>('project', ProjectSchema);
