@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import createHttpError from 'http-errors';
-import Project from '../models/project';
-import User from '../models/user';
+import Project from '../models/projectModel';
+import User from '../models/userModel';
 
 const listProjects = (req: Request, res: Response, next: NextFunction) => {
 	Project.find()

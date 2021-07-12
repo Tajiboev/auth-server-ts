@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import createHttpError from 'http-errors';
-import User from '../models/user';
-import { sign } from '../utils/jwt';
+import User from '../models/userModel';
+import { signJWT } from '../utils/jwt';
 
 const signup = async (req: Request, res: Response, next: NextFunction) => {
 	try {
@@ -12,7 +12,7 @@ const signup = async (req: Request, res: Response, next: NextFunction) => {
 
 		const user = await User.create({ email, password, firstName, lastName });
 
-		const token = await sign(user._id);
+		const token = await signJWT(user._id);
 
 		res.status(201).json({ user, token });
 	} catch (error) {
@@ -30,7 +30,7 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
 		const pwdMatch = user.password === password;
 		if (!pwdMatch) throw new createHttpError.Unauthorized('PWD mismatch');
 
-		const token = await sign(user._id);
+		const token = await signJWT(user._id);
 
 		res.status(200).json({ user, token });
 	} catch (error) {
