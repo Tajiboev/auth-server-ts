@@ -5,18 +5,8 @@ const config = dotenv.config();
 if (config.error || !config.parsed) throw config.error;
 const env = config.parsed;
 
-const MONGO_OPTIONS = {
-	useNewUrlParser: true,
-	useUnifiedTopology: true,
-	useCreateIndex: true,
-	useFindAndModify: false
-};
-
 const mongo = {
-	password: env.MONGO_PASSWORD,
-	dbname: env.MONGO_DBNAME,
-	options: MONGO_OPTIONS,
-	url: `mongodb+srv://dbadmin:${env.MONGO_PASSWORD}@cluster0.9oliw.mongodb.net/${env.MONGO_DBNAME}?retryWrites=true&w=majority`
+	url: `mongodb+srv://${env.MONGO_USERNAME}:${env.MONGO_PASSWORD}@cluster0.9oliw.mongodb.net/${env.MONGO_DBNAME}?retryWrites=true&w=majority`
 };
 
 const serverConfig = {
