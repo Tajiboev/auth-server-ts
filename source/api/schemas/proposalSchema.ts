@@ -1,7 +1,6 @@
-import mongoose, { Schema } from 'mongoose';
-import { IProposal } from '../utils/interfaces';
+import { Schema } from 'mongoose';
 
-const ProposalSchema: Schema = new Schema(
+const proposalSchema: Schema = new Schema(
 	{
 		price: String,
 		message: String,
@@ -17,4 +16,4 @@ const ProposalSchema: Schema = new Schema(
 	{ strictQuery: true, timestamps: true }
 );
 
-export default mongoose.model<IProposal>('proposal', ProposalSchema);
+export default proposalSchema;

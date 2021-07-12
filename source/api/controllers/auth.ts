@@ -1,8 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import createHttpError from 'http-errors';
 import User from '../models/user';
-// import jwt from 'jsonwebtoken';
-// import { jwtSecrets } from '../../config';
 import { sign } from '../utils/jwt';
 
 const signup = async (req: Request, res: Response, next: NextFunction) => {
@@ -26,7 +24,7 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
 	const { email, password } = req.body;
 
 	try {
-		const user = await User.findOne({ email });
+		const user = await User.findOne({ email }).exec();
 		if (!user) throw new createHttpError.Unauthorized('No user');
 
 		const pwdMatch = user.password === password;

@@ -1,7 +1,8 @@
-import mongoose, { Schema } from 'mongoose';
-import { IUser } from '../utils/interfaces';
+import bcrypt from 'bcrypt';
+import { Schema, HookNextFunction } from 'mongoose';
+import { IUser, IUserDocument } from '../interfaces/user';
 
-const UserSchema: Schema = new Schema(
+const userSchema: Schema = new Schema(
 	{
 		email: {
 			type: String,
@@ -30,26 +31,38 @@ const UserSchema: Schema = new Schema(
 				ref: 'project'
 			}
 		],
-		contests: [
-			{
-				type: Schema.Types.ObjectId,
-				ref: 'contest'
-			}
-		],
+
 		proposals: [
 			{
 				type: Schema.Types.ObjectId,
 				ref: 'proposal'
-			}
-		],
-		entries: [
-			{
-				type: Schema.Types.ObjectId,
-				ref: 'entry'
 			}
 		]
 	},
 	{ strictQuery: true, timestamps: true }
 );
 
-export default mongoose.model<IUser>('User', UserSchema);
+userSchema.index({ email: 1 });
+
+userSchema.pre('save', async function (this: IUserDocument, next: HookNextFunction) {
+	if (!this.isModified('password')) return next();
+
+	try {
+		const salt = await bcrypt.genSalt(10);
+
+		const hash = await bcrypt.hash(this.password, salt);
+
+		this.password = hash;
+	} catch (e) {
+		return next(e);
+	}
+
+	return next();
+});
+
+userSchema.methods.comparePassword = async function (candidatePassword: string): Promise<boolean> {
+	const user = this as IUserDocument;
+	return bcrypt.compare(candidatePassword, user.password).catch((e) => false);
+};
+
+export default userSchema;

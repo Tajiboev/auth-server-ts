@@ -57,9 +57,13 @@ const deleteProject = async (req: Request, res: Response, next: NextFunction) =>
 		const project = await Project.findById(id).exec();
 		if (!project) throw new createHttpError.NotFound(`project with the id ${id} not found`);
 
-		if (project.author !== userID) throw new createHttpError.Unauthorized('You cannot delete this');
+		if (project.author != userID) throw new createHttpError.Unauthorized('You cannot delete this');
 
 		await project.remove();
+		const user = User.findById(userID).exec();
+		if (!user) throw new createHttpError.Unauthorized('You cannot delete this');
+
+		res.status(200).json({ message: `Project ${project._id} has been deleted` });
 	} catch (e) {
 		next(e);
 	}
