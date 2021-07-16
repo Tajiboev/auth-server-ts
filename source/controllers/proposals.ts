@@ -1,23 +1,20 @@
 import { NextFunction, Request, Response } from 'express';
-// import createHttpError from 'http-errors';
 import Proposal from '../models/proposalModel';
 
 const addProposal = (req: Request, res: Response, next: NextFunction) => {
 	const { title, message, price } = req.body;
-	const { id } = res.locals;
+	const { uid } = res.locals;
 
 	Proposal.create({
-		author: id,
+		author: uid,
 		title,
 		message,
 		price
 	})
-		.then((project) => {
-			res.status(201).json(project);
+		.then((proposal) => {
+			res.status(201).json(proposal);
 		})
-		.catch((err) => {
-			next(err);
-		});
+		.catch(next);
 };
 
 export { addProposal };

@@ -17,23 +17,17 @@ const listProjects = (req: Request, res: Response, next: NextFunction) => {
 
 const addProject = async (req: Request, res: Response, next: NextFunction) => {
 	const { title, description, budget, deadline } = req.body;
-	const { userID } = res.locals;
+	const { uid } = res.locals;
 
-	try {
-		const project = await Project.create({
-			author: userID,
-			title,
-			description,
-			budget,
-			deadline
-		});
-		const user = await User.findByIdAndUpdate(userID, { $push: { projects: [project['_id']] } }).exec();
-		if (!user) throw new createHttpError.InternalServerError('error updating user returned null');
-
-		res.status(201).json({ project });
-	} catch (e) {
-		next(e);
-	}
+	Project.create({
+		author: uid,
+		title,
+		description,
+		budget,
+		deadline
+	})
+		.then((project) => res.status(201).json({ project }))
+		.catch(next);
 };
 
 const oneProject = (req: Request, res: Response, next: NextFunction) => {
@@ -44,24 +38,20 @@ const oneProject = (req: Request, res: Response, next: NextFunction) => {
 			if (!project) throw new createHttpError.NotFound(`project with the id ${id} not found`);
 			res.status(200).json({ project });
 		})
-		.catch((e) => {
-			next(e);
-		});
+		.catch(next);
 };
 
 const deleteProject = async (req: Request, res: Response, next: NextFunction) => {
 	const { id } = req.params;
-	const { userID } = res.locals;
+	const { uid } = res.locals;
 
 	try {
 		const project = await Project.findById(id).exec();
 		if (!project) throw new createHttpError.NotFound(`project with the id ${id} not found`);
 
-		if (project.author != userID) throw new createHttpError.Unauthorized('You cannot delete this');
+		if (project.author != uid) throw new createHttpError.Unauthorized('You cannot delete this');
 
 		await project.remove();
-		const user = User.findById(userID).exec();
-		if (!user) throw new createHttpError.Unauthorized('You cannot delete this');
 
 		res.status(200).json({ message: `Project ${project._id} has been deleted` });
 	} catch (e) {

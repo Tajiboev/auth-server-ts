@@ -36,11 +36,10 @@ const projectSchema: Schema = new Schema(
 );
 
 projectSchema.post('save', async function (this: IProposalDocument, next: HookNextFunction) {
+	console.log('post save');
 	User.updateOne({ _id: this.author }, { $addToSet: { projects: [this._id] } })
 		.exec()
-		.catch(next);
-
-	return next();
+		.catch(console.log);
 });
 
 projectSchema.post('remove', async function (this: IProposalDocument, next: HookNextFunction) {

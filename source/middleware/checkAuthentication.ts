@@ -1,13 +1,13 @@
 import { Request, Response, NextFunction } from 'express';
 import createHttpError from 'http-errors';
 import jwt from 'jsonwebtoken';
-import { jwtSecrets } from '../../config';
+import { jwtSecrets } from '../config';
 
 const checkAuthentication = async (req: Request, res: Response, next: NextFunction) => {
 	const { authorization } = req.headers;
 
 	if (!authorization || !authorization.startsWith('Bearer')) {
-		console.error('No auth header or header does not statr with Bearer');
+		console.error('No auth header or header does not start with Bearer');
 		return next(createHttpError(401, 'Unathorized'));
 	}
 
