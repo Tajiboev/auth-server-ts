@@ -13,5 +13,5 @@ export interface IUser {
 export interface IUserDocument extends IUser, Document {
 	createdAt: Date;
 	updatedAt: Date;
-	comparePassword(pwd: string): Promise<boolean>;
+	comparePassword(candidatePassword: string): Promise<boolean>;
 }
