@@ -19,4 +19,11 @@ const projectSchema = Joi.object({
 	deadline: Joi.date().required()
 });
 
-export { signupSchema, loginSchema, projectSchema };
+const projectUpdateSchema = Joi.object({
+	title: Joi.string(),
+	description: Joi.string(),
+	budget: Joi.string(),
+	deadline: Joi.date()
+});
+
+export { signupSchema, loginSchema, projectSchema, projectUpdateSchema };
