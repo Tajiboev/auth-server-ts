@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt';
 import { Schema, HookNextFunction } from 'mongoose';
-import { IUser, IUserDocument } from '../interfaces/user';
+import { IUserDocument } from '../interfaces/user';
 
 const userSchema: Schema = new Schema(
 	{
@@ -28,21 +28,19 @@ const userSchema: Schema = new Schema(
 		projects: [
 			{
 				type: Schema.Types.ObjectId,
-				ref: 'project'
+				ref: 'Project'
 			}
 		],
 
 		proposals: [
 			{
 				type: Schema.Types.ObjectId,
-				ref: 'proposal'
+				ref: 'Proposal'
 			}
 		]
 	},
 	{ strictQuery: true, timestamps: true }
 );
-
-userSchema.index({ email: 1 });
 
 userSchema.pre('save', async function (this: IUserDocument, next: HookNextFunction) {
 	if (!this.isModified('password')) return next();
