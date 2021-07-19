@@ -27,7 +27,7 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
 		const user = await User.findOne({ email }).exec();
 		if (!user) throw new createHttpError.Unauthorized('No user');
 
-		const pwdMatch = user.password === password;
+		const pwdMatch = await user.comparePassword(password);
 		if (!pwdMatch) throw new createHttpError.Unauthorized('PWD mismatch');
 
 		const token = await signJWT(user._id);
