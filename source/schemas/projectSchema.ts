@@ -1,5 +1,5 @@
 import { Schema, HookNextFunction } from 'mongoose';
-import { IProposalDocument } from '../interfaces/proposal';
+import { IProjectDocument } from '../interfaces/project';
 import User from '../models/userModel';
 
 const projectSchema: Schema = new Schema(
@@ -22,32 +22,25 @@ const projectSchema: Schema = new Schema(
 		},
 		author: {
 			type: Schema.Types.ObjectId,
-			ref: 'user',
+			ref: 'User',
 			required: true
 		},
 		proposals: [
 			{
 				type: Schema.Types.ObjectId,
-				ref: 'proposal'
+				ref: 'Proposal'
 			}
 		]
 	},
 	{ strictQuery: true, timestamps: true }
 );
 
-projectSchema.post('save', async function (this: IProposalDocument, next: HookNextFunction) {
-	console.log('post save');
-	User.updateOne({ _id: this.author }, { $addToSet: { projects: [this._id] } })
-		.exec()
-		.catch(console.log);
+projectSchema.pre('save', async function (this: IProjectDocument, next: HookNextFunction) {
+	await User.updateOne({ _id: this.author }, { $addToSet: { projects: [this._id] } }).exec();
 });
 
-projectSchema.post('remove', async function (this: IProposalDocument, next: HookNextFunction) {
-	User.updateOne({ _id: this.author }, { $pull: { projects: [this._id] } })
-		.exec()
-		.catch(next);
-
-	return next();
+projectSchema.post('remove', async function (this: IProjectDocument, next: HookNextFunction) {
+	await User.updateOne({ _id: this.author }, { $pull: { projects: this._id } }).exec();
 });
 
 export default projectSchema;
