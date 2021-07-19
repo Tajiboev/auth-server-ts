@@ -5,14 +5,12 @@ import User from '../models/userModel';
 
 const listProjects = (req: Request, res: Response, next: NextFunction) => {
 	Project.find()
-		.populate('author', '_id email', User)
+		.populate('author', '_id', User)
 		.exec()
 		.then((result) => {
-			res.status(200).json({ projects: result });
+			res.status(200).json({ data: result });
 		})
-		.catch((err) => {
-			next(err);
-		});
+		.catch(next);
 };
 
 const addProject = async (req: Request, res: Response, next: NextFunction) => {
@@ -26,7 +24,7 @@ const addProject = async (req: Request, res: Response, next: NextFunction) => {
 		budget,
 		deadline
 	})
-		.then((project) => res.status(201).json({ project }))
+		.then((project) => res.status(201).json(project))
 		.catch(next);
 };
 
@@ -36,16 +34,16 @@ const oneProject = (req: Request, res: Response, next: NextFunction) => {
 		.exec()
 		.then((project) => {
 			if (!project) throw new createHttpError.NotFound(`project with the id ${id} not found`);
-			res.status(200).json({ project });
+			res.status(200).json({ data: project });
 		})
 		.catch(next);
 };
 
 const deleteProject = async (req: Request, res: Response, next: NextFunction) => {
-	const { id } = req.params;
-	const { uid } = res.locals;
-
 	try {
+		const { id } = req.params;
+		const { uid } = res.locals;
+
 		const project = await Project.findById(id).exec();
 		if (!project) throw new createHttpError.NotFound(`project with the id ${id} not found`);
 
@@ -59,4 +57,22 @@ const deleteProject = async (req: Request, res: Response, next: NextFunction) =>
 	}
 };
 
-export { listProjects, oneProject, deleteProject, addProject };
+const updateProject = async (req: Request, res: Response, next: NextFunction) => {
+	try {
+		const updates = req.body;
+		const { id } = req.params;
+		const { uid } = res.locals;
+
+		const project = await Project.findById(id).exec();
+		if (!project) throw new createHttpError.NotFound(`project with the id ${id} not found`);
+		if (project.author != uid) throw new createHttpError.Unauthorized('You cannot delete this');
+
+		const result = await project.updateOne(updates).exec();
+
+		res.status(200).json({ data: result });
+	} catch (e) {
+		next(e);
+	}
+};
+
+export { listProjects, oneProject, deleteProject, addProject, updateProject };
