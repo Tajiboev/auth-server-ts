@@ -2,10 +2,10 @@ import express from 'express';
 const router = express.Router();
 
 import methodError from '../utils/methodError';
-import { addProject, deleteProject, listProjects, oneProject } from '../controllers/projects';
+import { addProject, deleteProject, listProjects, oneProject, updateProject } from '../controllers/projects';
 
 import validateBody from '../middleware/validateBody';
-import { projectSchema } from '../utils/validationSchemas';
+import { projectSchema, projectUpdateSchema } from '../utils/validationSchemas';
 import checkAuthentication from '../middleware/checkAuthentication';
 
 router
@@ -18,6 +18,7 @@ router
 	.route('/:id')
 	.get(oneProject)
 	.delete(checkAuthentication, deleteProject)
+	.patch(checkAuthentication, validateBody(projectUpdateSchema), updateProject)
 	.all(methodError({ allowed: ['GET', 'DELETE'] }));
 
 export default router;
