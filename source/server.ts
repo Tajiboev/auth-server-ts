@@ -1,30 +1,29 @@
-import { createServer } from 'https';
-import { serverConfig, mongo } from './config';
-import app from './app';
+import { createServer } from 'http';
 import mongoose from 'mongoose';
+import app from './app';
+import log from './logger';
+import { port } from './config';
+import connectDB from './db';
 
-const server = createServer(serverConfig.ssl, app);
+const server = createServer(app);
 
-server.listen(serverConfig.port, () => {
-	console.info(`Server listening on port ${serverConfig.port}`);
+server.listen(port, async () => {
+	log.info(`Server listening on port ${port}`);
+	connectDB();
 });
-mongoose
-	.connect(mongo.url, {
-		useNewUrlParser: true,
-		useUnifiedTopology: true,
-		useCreateIndex: true,
-		useFindAndModify: false
-	})
-	.then((r) => console.info('Mongoose connected'))
-	.catch((e) => console.error(e));
 
-const stopServer = async () => {
-	server.close();
-	await mongoose.disconnect();
-	await mongoose.connection.close();
-	console.info('Server shut down!');
-	process.exit(0);
-};
+async function shutdown() {
+	try {
+		server.close(() => {
+			log.info('HTTP server closed');
+		});
+		await mongoose.disconnect();
+		await mongoose.connection.close();
+	} catch (error) {
+		log.error(error);
+		process.exit(1);
+	}
+}
 
-process.on('SIGINT', stopServer);
-process.on('SIGTERM', stopServer);
+process.on('SIGTERM', shutdown);
+process.on('SIGINT', shutdown);
